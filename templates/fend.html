@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Car1</title>
+<style>
+body {
+  margin: 0;
+  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 40%),
+    radial-gradient(circle at bottom right, rgba(0, 255, 204, 0.05), transparent 60%),
+    linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+  background-size: cover;
+  background-attachment: fixed;
+  color: #f0f4f8;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+h2 {
+  text-align: center;
+  font-size: 2rem;
+  color: #f1f5f9;
+  letter-spacing: 1.5px;
+  margin-bottom: 30px;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+
+.form-group {
+  margin-bottom: 22px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #dbeafe;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #e0f2fe;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #3bc9db;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 2px rgba(59, 201, 219, 0.3);
+}
+
+.radio-group {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #cbd5e1;
+  cursor: pointer;
+}
+
+.slider {
+  width: 100%;
+  accent-color: #3bc9db;
+}
+
+#prodYearValue {
+  margin-top: 8px;
+  font-weight: 500;
+  color: #bae6fd;
+}
+
+.scrollable-list {
+  max-height: 150px;
+  overflow-y: auto;
+  border-radius: 8px;
+  background: #333;  /* Dark background color for better contrast */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: absolute;
+  width: 100%;
+  z-index: 1000;
+  display: none;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  color: white;  /* White text color */
+}
+
+.scrollable-list div {
+  padding: 10px;
+  cursor: pointer;
+  color: white;  /* White text color for the text inside each div */
+}
+
+.scrollable-list div:hover {
+  background-color: #f0f0f0;  /* Light grey hover effect */
+  color: #333;  /* Change text color to dark on hover */
+}
+button {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #3bc9db, #2563eb);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #2563eb, #3bc9db);
+  transform: scale(1.02);
+}
+
+.result {
+  margin-top: 30px;
+  font-size: 20px;
+  color: #22c55e;
+  text-align: center;
+  font-weight: bold;
+}
+/* Style for select tag */
+select {
+  background: rgba(255, 255, 255, 0.07) /* White background */
+  color:white ; /* Dark text for good contrast */
+  border: 1px solid #ccc; /* Light border */
+  border-radius: 6px; /* Rounded corners */
+  padding: 10px;
+  font-size: 14px;
+  width: 100%; /* Full width */
+}
+
+/* Style for option texts */
+select option {
+  background-color:black; /* White background for options */
+  color:white; /* Dark text color */
+}
+
+/* Option text hover effect */
+select option:hover {
+  background-color:white; /* Light grey background on hover */
+}
+
+
+</style>
+</head>
+<body>
+  <div class="container">
+    <h2>Car Price Predictor</h2>
+   <form id="carForm" method="POST" action="/predict">
+
+      <!-- Manufacturer -->
+      <div class="form-group" style="position: relative;">
+        <label for="manufacturerSearch">Manufacturer</label>
+        <input type="text" id="manufacturerSearch" name="manufacturer" placeholder="Start typing..." oninput="filterManufacturers()">
+        <div id="manufacturerList" class="scrollable-list"></div>
+      </div>
+
+      <!-- Production Year -->
+      <div class="form-group">
+        <label for="prodYearSearch">Production Year</label>
+        <input type="range" id="prodYearSearch" name="prodYear" min="1939" max="2020" value="2020" class="slider">
+        <div id="prodYearValue">2020</div>
+        <div class="year-labels">
+          <span>Min: 1939</span> | <span>Max: 2020</span>
+        </div>
+      </div>
+
+      <!-- Leather Interior -->
+      <div class="form-group">
+        <label>Leather Interior</label>
+        <div class="radio-group" required>
+          <label for="leatherYes">
+            <input type="radio" id="leatherYes" name="leatherInterior" value="Yes"> Yes
+          </label>
+          <label for="leatherNo">
+            <input type="radio" id="leatherNo" name="leatherInterior" value="No"> No
+          </label>
+        </div>
+      </div>
+
+      <!-- Fuel Type -->
+      <div class="form-group">
+        <label for="fuelType">Fuel Type</label>
+        <select id="fuelType" name="fuelType">
+          <option value="Petrol">Petrol</option>
+          <option value="Diesel">Diesel</option>
+          <option value="CNG">CNG</option>
+          <option value="Hybrid">Hybrid</option>
+          <option value="LPG">LPG</option>
+          <option value="Plug-in Hybrid">Plug-in Hybrid</option>
+          <option value="Hydrogen">Hydrogen</option>
+        </select>
+      </div>
+
+      <!-- Engine Volume -->
+      <div class="form-group">
+  <label for="engineVolume">Engine Volume</label>
+  <input 
+    type="number" 
+    id="engineVolume" 
+    name="engineVolume" 
+    placeholder="Enter Engine Volume" 
+    min="1" 
+    max="9.9" 
+    step="0.1" 
+    pattern="^[1-9](\.\d)?$" 
+    required
+  >
+</div>
+
+      <!-- Gearbox Type -->
+      <div class="form-group">
+        <label for="gearboxType">Gearbox Type</label>
+        <select id="gearboxType" name="gearboxType">
+          <option value="Manual">Manual</option>
+          <option value="Automatic">Automatic</option>
+          <option value="Tiptronic">Tiptronic</option>
+          <option value="Variator">Variator</option>
+        </select>
+      </div>
+
+      <!-- Airbags -->
+      <div class="form-group">
+        <label for="airbags">Number of Airbags</label>
+        <input type="number" id="airbags" name="airbags" placeholder="Enter number of airbags" required>
+      </div>
+
+      <button type="submit">Predict Price</button>
+    </form>
+  <script>
+    const manufacturers = [
+      "AUDI", "BMW", "CHEVROLET", "DODGE", "FERRARI", "FIAT", "FORD",
+      "GMC", "HONDA", "HYUNDAI", "ISUZU", "JAGUAR", "JEEP", "KIA",
+      "LAMBORGHINI", "LANCIA", "LAND ROVER", "MERCEDES-BENZ", "NISSAN",
+      "PORSCHE", "RENAULT", "ROLLS-ROYCE", "SKODA", "SUZUKI", "TOYOTA",
+      "UAZ", "VAZ", "VOLKSWAGEN", "VOLVO"
+    ];
+
+    function filterManufacturers() {
+      const query = document.getElementById('manufacturerSearch').value.toLowerCase();
+      const filtered = manufacturers.filter(m => m.toLowerCase().includes(query));
+      const list = document.getElementById('manufacturerList');
+      list.innerHTML = '';
+
+      if (query) {
+        list.style.display = 'block';
+        filtered.forEach(item => {
+          const div = document.createElement('div');
+          div.textContent = item;
+          div.onclick = () => selectManufacturer(item);
+          list.appendChild(div);
+        });
+      } else {
+        list.style.display = 'none';
+      }
+    }
+
+    function selectManufacturer(name) {
+      document.getElementById('manufacturerSearch').value = name;
+      document.getElementById('manufacturerList').style.display = 'none';
+    }
+
+    document.getElementById('prodYearSearch').addEventListener('input', function () {
+      document.getElementById('prodYearValue').textContent = this.value;
+    });
+
+     </script>
+<div class="result" id="result">
+  {% if price %}
+    Estimated Price: ${{ price }}
+  {% else %}
+    Predicted Price will appear here.
+  {% endif %}
+</div>
+
+</body>
+</html>
